@@ -13,7 +13,7 @@ matrix:
 
 # Skip the install step. Don't `go get` dependencies.
 install:
-  - export GO111MODULE=on                                       # Enable module support
+  - export GO111MODULE=auto                                       # Enable module support
   - go get golang.org/x/lint/golint                             # Linter
   - go get honnef.co/go/tools/cmd/megacheck                     # Badass static analyzer/linter
 
