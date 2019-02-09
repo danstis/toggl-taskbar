@@ -13,6 +13,6 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20150712133111-4e1c5567d7c2 // indirect
-	golang.org/x/image v0.0.0-20190118043309-183bebdce1b2 // indirect
+	golang.org/x/image v0.0.0-20190209060608-ef4a1470e0dc // indirect
 	golang.org/x/sys v0.0.0-20190204203706-41f3e6584952 // indirect
 )

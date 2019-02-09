@@ -1,6 +1,5 @@
-assembly-versioning-scheme: None
 mode: Mainline
-increment: Inherit
+increment: Minor
 branches: {}
 ignore:
   sha: []
