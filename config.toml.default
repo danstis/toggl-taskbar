@@ -2,3 +2,4 @@ token = "" # Retrieve your token from https://toggl.com/app/profile
 email = "" # Your Email address to send with requests to teh toggl API
 userId = "" # Get from URL segment when selecting the individual user in this report: https://toggl.com/app/reports/weekly
 workspaceId = "" # Get from URL segment when opening settings of the workspace from this page: https://toggl.com/app/workspaces
+syncInterval = 5 # Sync interval in minutes. This controls how often the app checks for updates
