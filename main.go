@@ -26,10 +26,11 @@ type togglTime struct {
 
 // Settings contains the application configuration
 type Settings struct {
-	Token       string `toml:"token"`
-	UserID      string `toml:"userId"`
-	WorkspaceID string `toml:"workspaceId"`
-	Email       string `toml:"email"`
+	Token        string `toml:"token"`
+	UserID       string `toml:"userId"`
+	WorkspaceID  string `toml:"workspaceId"`
+	Email        string `toml:"email"`
+	SyncInterval int    `toml:"syncInterval"`
 }
 
 // Main entry point for the app.
@@ -54,6 +55,8 @@ func onReady() {
 
 	systray.SetTitle("Toggl Weekly Time")
 
+	log.Printf("Refresh interval: %v\n", time.Duration(config.SyncInterval)*time.Minute)
+
 	for {
 		t, err = getWeeklyTime(&config)
 		if err != nil {
@@ -62,7 +65,7 @@ func onReady() {
 		log.Printf("- Got new time %d:%2d\n", t.hours, t.minutes) // TODO: remove this when logging goes away
 		updateIcon(fmt.Sprintf("%v", t.hours))
 		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%2d", t.hours, t.minutes))
-		time.Sleep(1 * time.Minute)
+		time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
 	}
 }
 
