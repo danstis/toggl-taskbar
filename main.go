@@ -62,9 +62,9 @@ func onReady() {
 		if err != nil {
 			log.Printf("Failed to get Toggl details: %v\n", err)
 		}
-		log.Printf("- Got new time %d:%2d\n", t.hours, t.minutes) // TODO: remove this when logging goes away
+		log.Printf("- Got new time %d:%02d\n", t.hours, t.minutes) // TODO: remove this when logging goes away
 		updateIcon(fmt.Sprintf("%v", t.hours))
-		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%2d", t.hours, t.minutes))
+		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", t.hours, t.minutes))
 		time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
 	}
 }
