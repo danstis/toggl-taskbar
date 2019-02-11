@@ -46,6 +46,10 @@ func onReady() {
 		log.Fatalf("Failed to read configuration file: %v", err)
 	}
 	updateIcon("00")
+	mVersion := systray.AddMenuItem(fmt.Sprintf("Toggl Weekly Tracker v%v", Version), "Version")
+	mVersion.Disable()
+	systray.AddSeparator()
+	mTime := systray.AddMenuItem(fmt.Sprintf("This week: %d:%02d", 0, 0), "Current timer")
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 	go func() {
 		<-mQuit.ClickedCh
@@ -55,8 +59,6 @@ func onReady() {
 
 	systray.SetTitle("Toggl Weekly Time")
 
-	log.Printf("Refresh interval: %v\n", time.Duration(config.SyncInterval)*time.Minute)
-
 	for {
 		t, err = getWeeklyTime(&config)
 		if err != nil {
@@ -64,6 +66,7 @@ func onReady() {
 		}
 		log.Printf("- Got new time %d:%02d\n", t.hours, t.minutes) // TODO: remove this when logging goes away
 		updateIcon(fmt.Sprintf("%v", t.hours))
+		mTime.SetTitle(fmt.Sprintf("This week: %d:%02d", t.hours, t.minutes))
 		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", t.hours, t.minutes))
 		time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
 	}
