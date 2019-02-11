@@ -63,7 +63,7 @@ func onReady() {
 		log.Printf("- Got new time %v:%v\n", t.hours, t.minutes)
 		updateIcon(fmt.Sprintf("%v", t.hours))
 		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %v:%v", t.hours, t.minutes))
-		time.Sleep(60 * time.Second)
+		time.Sleep(5 * time.Minute)
 	}
 }
 
