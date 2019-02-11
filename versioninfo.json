@@ -1,0 +1,10 @@
+{
+    "StringFileInfo": {
+        "CompanyName": "",
+        "FileDescription": "Toggl weekly hours timer",
+        "LegalCopyright": "",
+        "OriginalFilename": "toggl-taskbar.exe",
+        "ProductName": "Toggle Weekly Timer"
+    },
+    "IconPath": "icon.ico"
+}
