@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"image/color"
 	"log"
 	"time"
 
@@ -26,11 +25,12 @@ type togglTime struct {
 
 // Settings contains the application configuration
 type Settings struct {
-	Token        string `toml:"token"`
-	UserID       string `toml:"userId"`
-	WorkspaceID  string `toml:"workspaceId"`
-	Email        string `toml:"email"`
-	SyncInterval int    `toml:"syncInterval"`
+	Token              string `toml:"token"`
+	UserID             string `toml:"userId"`
+	WorkspaceID        string `toml:"workspaceId"`
+	Email              string `toml:"email"`
+	SyncInterval       int    `toml:"syncInterval"`
+	HighlightThreshold int    `toml:"highlightThreshold"`
 }
 
 // Main entry point for the app.
@@ -45,7 +45,7 @@ func onReady() {
 	if err != nil {
 		log.Fatalf("Failed to read configuration file: %v", err)
 	}
-	updateIcon("00")
+	updateIcon(0, config.HighlightThreshold)
 	mVersion := systray.AddMenuItem(fmt.Sprintf("Toggl Weekly Tracker v%v", Version), "Version")
 	mVersion.Disable()
 	systray.AddSeparator()
@@ -65,7 +65,7 @@ func onReady() {
 			log.Printf("Failed to get Toggl details: %v\n", err)
 		}
 		log.Printf("- Got new time %d:%02d\n", t.hours, t.minutes) // TODO: remove this when logging goes away
-		updateIcon(fmt.Sprintf("%v", t.hours))
+		updateIcon(int(t.hours), config.HighlightThreshold)
 		mTime.SetTitle(fmt.Sprintf("This week: %d:%02d", t.hours, t.minutes))
 		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", t.hours, t.minutes))
 		time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
@@ -169,25 +169,27 @@ func getMinutes(t time.Duration) int {
 	return int(m)
 }
 
-func updateIcon(hours string) {
-	icon, err := createIcon(16, 16, hours)
+func updateIcon(hours, threshold int) {
+	icon, err := createIcon(16, 16, hours, threshold)
 	if err != nil {
 		log.Fatalf("Error generating icon: %v", err)
 	}
 	systray.SetIcon(icon)
 }
 
-func createIcon(x, y int, label string) ([]byte, error) {
+func createIcon(x, y, hours, threshold int) ([]byte, error) {
 	dc := gg.NewContext(x, y)
-	// Create a trasparant background
-	dc.SetColor(color.Transparent)
-	dc.Clear()
+	if hours >= threshold {
+		// Create a red background
+		dc.SetHexColor("#9E0000")
+		dc.Clear()
+	}
 	// Add Text
 	dc.SetHexColor("#FFFFFF")
 	if err := dc.LoadFontFace("assets/fonts/Go-Bold.ttf", 14); err != nil {
 		return []byte{}, err
 	}
-	dc.DrawStringAnchored(label, float64(x/2), float64(y/2), 0.5, 0.5)
+	dc.DrawStringAnchored(fmt.Sprintf("%v", hours), float64(x/2), float64(y/2), 0.5, 0.5)
 
 	buf := new(bytes.Buffer)
 	err := ico.Encode(buf, dc.Image())
