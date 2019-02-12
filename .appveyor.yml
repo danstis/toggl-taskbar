@@ -39,14 +39,13 @@ artifacts:
 
 deploy:
   release: v$(GitVersion_SemVer)
-  description: ""
   provider: GitHub
   auth_token:
     secure: W3T3l8qHO8zyWmXx72+sdErNqCEfFVa/MEu4FAq8EUiI2SrLeQhTE8Ff4ts5avlO # GitHub Token
   artifact: toggl-taskbar
-  force_update: false
+  force_update: true
   draft: false
   prerelease: false
   on:
     branch: master
-    # appveyor_repo_tag: true # deploy on tag push only
+    appveyor_repo_tag: true # deploy on tag push only

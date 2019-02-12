@@ -1,8 +1,8 @@
 mode: Mainline
-major-version-bump-message: '\+semver:\s?(breaking|major)'
-minor-version-bump-message: '\+semver:\s?(feature|minor)'
-patch-version-bump-message: '\+semver:\s?(fix|patch)'
-no-bump-message: '\+semver:\s?(none|skip)'
+major-version-bump-message: 'BREAKING CHANGE:'
+minor-version-bump-message: 'feat:'
+patch-version-bump-message: '(fix|perf|refactor):'
+no-bump-message: '(build|ci|docs|style|test):'
 increment: Minor
 branches:
   master:
