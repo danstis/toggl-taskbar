@@ -26,11 +26,17 @@ type togglTime struct {
 // Settings contains the application configuration
 type Settings struct {
 	Token              string `toml:"token"`
-	UserID             string `toml:"userId"`
-	WorkspaceID        string `toml:"workspaceId"`
 	Email              string `toml:"email"`
 	SyncInterval       int    `toml:"syncInterval"`
 	HighlightThreshold int    `toml:"highlightThreshold"`
+	UserID             string
+	Workspaces         []Workspaces
+}
+
+// Workspaces stores the available toggl workspaces for the user
+type Workspaces struct {
+	ID   int32  `json:"id"`
+	Name string `json:"name"`
 }
 
 // Main entry point for the app.
@@ -40,16 +46,28 @@ func main() {
 
 func onReady() {
 	var t togglTime
+	// Get the settings
 	var config Settings
 	_, err := toml.DecodeFile(configFile, &config)
 	if err != nil {
 		log.Fatalf("Failed to read configuration file: %v", err)
 	}
+	err = config.getUserDetail()
+	if err != nil {
+		log.Printf("Failed to get Toggl user details: %v\n", err)
+	}
+	log.Printf("- Workspaces:%v\n", config.Workspaces)
+
+	// Configure the systray item
 	updateIcon(0, config.HighlightThreshold)
 	mVersion := systray.AddMenuItem(fmt.Sprintf("Toggl Weekly Tracker v%v", Version), "Version")
 	mVersion.Disable()
 	systray.AddSeparator()
-	mTime := systray.AddMenuItem(fmt.Sprintf("This week: %d:%02d", 0, 0), "Current timer")
+	systray.SetTitle("Toggl Weekly Time")
+	menuItems := make(map[int32]*systray.MenuItem)
+	for _, item := range config.Workspaces {
+		menuItems[item.ID] = systray.AddMenuItem(fmt.Sprintf("%s: %d:%02d", item.Name, 0, 0), item.Name)
+	}
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 	go func() {
 		<-mQuit.ClickedCh
@@ -57,17 +75,22 @@ func onReady() {
 		systray.Quit()
 	}()
 
-	systray.SetTitle("Toggl Weekly Time")
-
 	for {
-		t, err = getWeeklyTime(&config)
-		if err != nil {
-			log.Printf("Failed to get Toggl details: %v\n", err)
+		totalTime := togglTime{hours: 0, minutes: 0}
+		for _, item := range config.Workspaces {
+			t, err = getWeeklyTime(&config, fmt.Sprint(item.ID))
+			if err != nil {
+				log.Printf("Failed to get Toggl details: %v\n", err)
+			}
+			log.Printf("- %s [%s] time: %d:%02d\n", item.Name, fmt.Sprint(item.ID), t.hours, t.minutes)
+			// Set the title of the menuItem to contain the time for the individual workspace
+			menuItems[item.ID].SetTitle(fmt.Sprintf("%s: %d:%02d", item.Name, t.hours, t.minutes))
+			totalTime.add(t)
 		}
-		log.Printf("- Got new time %d:%02d\n", t.hours, t.minutes) // TODO: remove this when logging goes away
-		updateIcon(int(t.hours), config.HighlightThreshold)
-		mTime.SetTitle(fmt.Sprintf("This week: %d:%02d", t.hours, t.minutes))
-		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", t.hours, t.minutes))
+
+		log.Printf("- Got new total time %d:%02d\n", totalTime.hours, totalTime.minutes)
+		updateIcon(int(totalTime.hours), config.HighlightThreshold)
+		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", totalTime.hours, totalTime.minutes))
 		time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
 	}
 }
@@ -76,12 +99,37 @@ func onExit() {
 	// Cleaning stuff here.
 }
 
-func getWeeklyTime(c *Settings) (togglTime, error) {
-	closedTime, err := getClosedTimeEntries(c)
+func (c *Settings) getUserDetail() error {
+	type UserResponse struct {
+		Data struct {
+			ID         int32        `json:"id"`
+			Workspaces []Workspaces `json:"workspaces"`
+		} `json:"data"`
+	}
+	var ur UserResponse
+	toggl := resty.New().SetHostURL("https://www.toggl.com/api/v8").SetBasicAuth(c.Token, "api_token")
+
+	_, err := toggl.R().
+		SetQueryParams(map[string]string{
+			"user_agent": c.Email,
+		}).
+		SetResult(&ur).
+		Get("/me?with_related_data=true")
+	if err != nil {
+		return fmt.Errorf("unable to get user details from the Toggl API: %v", err)
+	}
+
+	c.UserID = fmt.Sprint(ur.Data.ID)
+	c.Workspaces = ur.Data.Workspaces
+	return nil
+}
+
+func getWeeklyTime(c *Settings, w string) (togglTime, error) {
+	closedTime, err := getClosedTimeEntries(c, w)
 	if err != nil {
 		return togglTime{}, fmt.Errorf("failed to get closed time entries: %v", err)
 	}
-	openTime, err := getOpenTimeEntry(c)
+	openTime, err := getOpenTimeEntry(c, w)
 	if err != nil {
 		return togglTime{}, fmt.Errorf("failed to get open time entry: %v", err)
 	}
@@ -92,7 +140,7 @@ func getWeeklyTime(c *Settings) (togglTime, error) {
 	}, nil
 }
 
-func getClosedTimeEntries(c *Settings) (time.Duration, error) {
+func getClosedTimeEntries(c *Settings, w string) (time.Duration, error) {
 	type WeeklyResponse struct {
 		TotalGrand int `json:"total_grand"`
 	}
@@ -103,7 +151,7 @@ func getClosedTimeEntries(c *Settings) (time.Duration, error) {
 	_, err := toggleReports.R().
 		SetQueryParams(map[string]string{
 			"user_agent":   c.Email,
-			"workspace_id": c.WorkspaceID,
+			"workspace_id": w,
 			"user_ids":     c.UserID,
 			"since":        getLastMonday(),
 		}).
@@ -116,9 +164,10 @@ func getClosedTimeEntries(c *Settings) (time.Duration, error) {
 	return time.Duration(ct.TotalGrand) * time.Millisecond, nil
 }
 
-func getOpenTimeEntry(c *Settings) (time.Duration, error) {
+func getOpenTimeEntry(c *Settings, w string) (time.Duration, error) {
 	type TimeEntriesResponse struct {
 		Data struct {
+			WID      int32 `json:"wid"`
 			Duration int32 `json:"duration"`
 		} `json:"data"`
 	}
@@ -129,7 +178,7 @@ func getOpenTimeEntry(c *Settings) (time.Duration, error) {
 	_, err := toggl.R().
 		SetQueryParams(map[string]string{
 			"user_agent": c.Email,
-			"wid":        c.WorkspaceID,
+			"wid":        w,
 		}).
 		SetResult(&ot).
 		Get("/time_entries/current")
@@ -138,7 +187,8 @@ func getOpenTimeEntry(c *Settings) (time.Duration, error) {
 	}
 
 	// if the returned duration is not negative then there is no open entry.
-	if ot.Data.Duration >= 0 {
+	// we also filter entries that do not match the workspace here.
+	if ot.Data.Duration >= 0 || fmt.Sprint(ot.Data.WID) != w {
 		return 0, nil
 	}
 
@@ -167,6 +217,15 @@ func getMinutes(t time.Duration) int {
 	d := t.Round(time.Minute) % time.Hour
 	m := d / time.Minute
 	return int(m)
+}
+
+func (t *togglTime) add(n togglTime) {
+	t.minutes += n.minutes
+	t.hours += n.hours
+	if t.minutes >= 60 {
+		t.hours++
+		t.minutes -= 60
+	}
 }
 
 func updateIcon(hours, threshold int) {
