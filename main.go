@@ -14,7 +14,7 @@ import (
 )
 
 // Version contains the package version
-var Version = "0.0.0-default"
+var Version = "0.0.0-dev"
 
 const configFile = "config.toml"
 
