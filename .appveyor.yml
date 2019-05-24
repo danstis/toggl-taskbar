@@ -1,8 +1,7 @@
-clone_folder: c:\gopath\src\github.com\danstis\toggl-taskbar
+clone_folder: c:\src\github.com\danstis\toggl-taskbar
 
 environment:
   GOPATH: c:\gopath
-  GO111MODULE: on
 
 install:
   - choco install gitversion.portable -y
