@@ -60,7 +60,9 @@ func onReady() {
 
 	// Configure the systray item
 	updateIcon(0, config.HighlightThreshold)
-	mVersion := systray.AddMenuItem(fmt.Sprintf("Toggl Weekly Tracker v%v", Version), "Version")
+	mTitle := systray.AddMenuItem("Toggl Weekly Tracker", "Title")
+	mTitle.Disable()
+	mVersion := systray.AddMenuItem(fmt.Sprintf("v%v", Version), "Version")
 	mVersion.Disable()
 	systray.AddSeparator()
 	systray.SetTitle("Toggl Weekly Time")
@@ -68,6 +70,7 @@ func onReady() {
 	for _, item := range config.Workspaces {
 		menuItems[item.ID] = systray.AddMenuItem(fmt.Sprintf("%s: %d:%02d", item.Name, 0, 0), item.Name)
 	}
+	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 	go func() {
 		<-mQuit.ClickedCh
