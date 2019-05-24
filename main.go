@@ -71,7 +71,7 @@ func onReady() {
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 	go func() {
 		<-mQuit.ClickedCh
-		log.Println("Applicaiton exiting...")
+		log.Println("Application exiting...")
 		systray.Quit()
 	}()
 
