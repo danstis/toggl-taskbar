@@ -1,38 +1,11 @@
-clone_folder: c:\gopath\src\github.com\danstis\toggl-taskbar
+clone_folder: c:\src\github.com\danstis\toggl-taskbar
 
 environment:
   GOPATH: c:\gopath
-  GO111MODULE: on
 
 install:
   - choco install gitversion.portable -y
   - rm C:\Tools\GitVersion\GitVersion.exe
-  - ps: |
-      Remove-Item 'C:\go' -Recurse -Force -ErrorAction Ignore
-      Remove-Item 'C:\go-x86' -Recurse -Force -ErrorAction Ignore
-
-      Write-Host "Downloading..."
-      $goDistPath = "$env:TEMP\go1.12.windows-386.zip"
-      (New-Object Net.WebClient).DownloadFile('https://storage.googleapis.com/golang/go1.12.windows-386.zip', $goDistPath)
-
-      Write-Host "Unpacking..."
-      7z x $goDistPath -oC:\go1120-x86 | Out-Null
-      [IO.Directory]::Move('C:\go1120-x86\go', 'C:\go112-x86')
-      Remove-Item 'C:\go1120-x86' -Recurse -Force
-      del $goDistPath
-
-      Write-Host "Downloading..."
-      $goDistPath = "$env:TEMP\go1.12.windows-amd64.zip"
-      (New-Object Net.WebClient).DownloadFile('https://storage.googleapis.com/golang/go1.12.windows-amd64.zip', $goDistPath)
-
-      Write-Host "Unpacking..."
-      7z x $goDistPath -oC:\go1120-x64 | Out-Null
-      [IO.Directory]::Move('C:\go1120-x64\go', 'C:\go112')
-      Remove-Item 'C:\go1120-x64' -Recurse -Force
-      del $goDistPath
-
-      cmd /c mklink /J C:\go C:\go112
-      cmd /c mklink /J C:\go-x86 C:\go112-x86
   - mkdir %GOPATH%\bin
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - go version
