@@ -8,6 +8,13 @@ Taskbar icon example:
 Taskbar icon clicked:
 ![Taskbar icon clicked](https://raw.githubusercontent.com/danstis/toggl-taskbar/master/images/clicked.png)
 
+## How to use
+To use toggl-taskbar:
+1. Download the latest build from the [releases page](https://github.com/danstis/toggl-taskbar/releases).
+2. Extract to a folder locally, for example c:\toggl-taskbar.
+3. Update the variables in the `config.toml` file with your API key and email address.
+4. Execute the toggl-taskbar.exe to start the application.
+
 ## Contributing
 This project uses <https://www.conventionalcommits.org>.
 
