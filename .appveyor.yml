@@ -4,7 +4,7 @@ environment:
   GOPATH: c:\gopath
 
 install:
-  - choco install gitversion.portable -y
+  - choco install gitversion.portable -y --version 4.0.0
   - rm C:\Tools\GitVersion\GitVersion.exe
   - mkdir %GOPATH%\bin
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
