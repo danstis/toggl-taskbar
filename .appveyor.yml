@@ -30,8 +30,8 @@ after_test:
   - ps: Get-ChildItem -Path .\* -Include "*.exe","*.md","LICENSE" -Force | Copy-Item -Destination .\package
   - 7z a toggl-taskbar.zip %APPVEYOR_BUILD_FOLDER%\package\*
 
-# on_finish:
-#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 artifacts:
   - path: toggl-taskbar.zip
