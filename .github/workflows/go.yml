@@ -33,6 +33,7 @@ jobs:
 
     - name: Build
       run: |
+        export PATH=$PATH:$(go env GOPATH)/bin
         goversioninfo -64 -product-version="${{ steps.gitversion.outputs.semver }}" -ver-major="${{ steps.gitversion.outputs.major }}" -ver-minor="${{ steps.gitversion.outputs.minor }}" -ver-patch="${{ steps.gitversion.outputs.patch }}"
         go build -ldflags "-H=windowsgui -X main.Version=${{ steps.gitversion.outputs.semver }}" github.com/danstis/toggl-taskbar
 
