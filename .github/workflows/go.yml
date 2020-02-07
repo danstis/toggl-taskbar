@@ -17,7 +17,7 @@ jobs:
       uses: GitTools/actions@v0.6.2
       with:
         # Required version in the form of 5.x or exact version like 5.0.0
-        versionSpec: 5.x
+        versionSpec: 5.1.x
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
