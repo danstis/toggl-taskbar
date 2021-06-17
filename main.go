@@ -70,6 +70,7 @@ func onReady() {
 	for _, item := range config.Workspaces {
 		menuItems[item.ID] = systray.AddMenuItem(fmt.Sprintf("%s: %d:%02d", item.Name, 0, 0), item.Name)
 	}
+	menuItems[0] = systray.AddMenuItem(fmt.Sprintf("%s: %d:%02d", "Total", 0, 0), "Total")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 	go func() {
@@ -94,6 +95,7 @@ func onReady() {
 		log.Printf("- Got new total time %d:%02d\n", totalTime.hours, totalTime.minutes)
 		updateIcon(int(totalTime.hours), config.HighlightThreshold)
 		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", totalTime.hours, totalTime.minutes))
+		menuItems[0].SetTitle(fmt.Sprintf("%s: %d:%02d", "Total", totalTime.hours, totalTime.minutes))
 		time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
 	}
 }
