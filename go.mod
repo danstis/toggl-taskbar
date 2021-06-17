@@ -1,5 +1,7 @@
 module github.com/danstis/toggl-taskbar
 
+go 1.15
+
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/Kodeworks/golang-image-ico v0.0.0-20141118225523-73f0f4cfade9
