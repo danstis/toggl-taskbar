@@ -110,7 +110,7 @@ func (c *Settings) getUserDetail() error {
 		} `json:"data"`
 	}
 	var ur UserResponse
-	toggl := resty.New().SetHostURL("https://www.toggl.com/api/v8").SetBasicAuth(c.Token, "api_token")
+	toggl := resty.New().SetHostURL("https://api.track.toggl.com/api/v8").SetBasicAuth(c.Token, "api_token")
 
 	_, err := toggl.R().
 		SetQueryParams(map[string]string{
@@ -149,7 +149,7 @@ func getClosedTimeEntries(c *Settings, w string) (time.Duration, error) {
 	}
 	var ct WeeklyResponse
 
-	toggleReports := resty.New().SetHostURL("https://toggl.com/reports/api/v2").SetBasicAuth(c.Token, "api_token")
+	toggleReports := resty.New().SetHostURL("https://api.track.toggl.com/reports/api/v2").SetBasicAuth(c.Token, "api_token")
 
 	_, err := toggleReports.R().
 		SetQueryParams(map[string]string{
@@ -176,7 +176,7 @@ func getOpenTimeEntry(c *Settings, w string) (time.Duration, error) {
 	}
 	var ot TimeEntriesResponse
 
-	toggl := resty.New().SetHostURL("https://www.toggl.com/api/v8").SetBasicAuth(c.Token, "api_token")
+	toggl := resty.New().SetHostURL("https://api.track.toggl.com/api/v8").SetBasicAuth(c.Token, "api_token")
 
 	_, err := toggl.R().
 		SetQueryParams(map[string]string{
