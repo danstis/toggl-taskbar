@@ -1,54 +1,52 @@
 name: Go
 on: [push]
 jobs:
-
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
 
-    - name: Set up Go 1.13
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.13
-      id: go
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
 
-    - name: Fetch all history for all tags and branches
-      run: git fetch --prune --unshallow
-    
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.9
-      with:
-          versionSpec: '5.1.x'
-    
-    - name: Use GitVersion
-      id: gitversion # step id used as reference for output values
-      uses: gittools/actions/gitversion/execute@v0.9.9
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.9
+        with:
+          versionSpec: "5.x"
 
-    - name: Get dependencies
-      run: go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+      - name: Use GitVersion
+        id: gitversion # step id used as reference for output values
+        uses: gittools/actions/gitversion/execute@v0.9.9
 
-    - name: Build
-      run: |
-        export PATH=$PATH:$(go env GOPATH)/bin
-        goversioninfo -64 -product-version="${{ steps.gitversion.outputs.semver }}" -ver-major="${{ steps.gitversion.outputs.major }}" -ver-minor="${{ steps.gitversion.outputs.minor }}" -ver-patch="${{ steps.gitversion.outputs.patch }}"
-        go build -ldflags "-H=windowsgui -X main.Version=${{ steps.gitversion.outputs.semver }}" github.com/danstis/toggl-taskbar
+      - name: Get dependencies
+        run: go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
 
-    - name: Test
-      run: go vet ./...
+      - name: Build
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          goversioninfo -64 -product-version="${{ steps.gitversion.outputs.semver }}" -ver-major="${{ steps.gitversion.outputs.major }}" -ver-minor="${{ steps.gitversion.outputs.minor }}" -ver-patch="${{ steps.gitversion.outputs.patch }}"
+          go build -ldflags "-H=windowsgui -X main.Version=${{ steps.gitversion.outputs.semver }}" github.com/danstis/toggl-taskbar
 
-    - name: Package build
-      run: |
-        mkdir ./package
-        cp ./config.toml.default ./package/config.toml
-        cp -R ./assets ./package/
-        cp `ls *.exe *.md LICENSE` ./package/
-    
-    - name: Zip Release
-      uses: TheDoctor0/zip-release@v0.2.1
-      with:
-        filename: toggl-taskbar.zip
-        path: ./package/
+      - name: Test
+        run: go vet ./...
+
+      - name: Package build
+        run: |
+          mkdir ./package
+          cp ./config.toml.default ./package/config.toml
+          cp -R ./assets ./package/
+          cp `ls *.exe *.md LICENSE` ./package/
+
+      - name: Zip Release
+        uses: TheDoctor0/zip-release@v0.2.1
+        with:
+          filename: toggl-taskbar.zip
+          path: ./package/
