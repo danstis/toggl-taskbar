@@ -35,5 +35,4 @@ If you find a bug, or want this tool to do something that it currently does not,
 
 Please be detailed in the issue body.
 
-Optionally raise a feature request on feathub to allow voting:
-[![Feature Requests](http://feathub.com/danstis/toggl-taskbar?format=svg)](http://feathub.com/danstis/toggl-taskbar)
+Optionally create a discussion in [discussions](https://github.com/danstis/toggl-taskbar/discussions)
