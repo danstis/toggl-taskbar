@@ -54,9 +54,9 @@ jobs:
       - name: Package build
         run: |
           mkdir ./package
-          cp ./config.toml.default ./package/config.toml
-          cp -R ./assets ./package/
-          cp `ls *.exe *.md LICENSE` ./package/
+          Copy-Item .\config.toml.default .\package\config.toml
+          Copy-Item .\assets .\package\ -Recurse -Force
+          Get-ChildItem -Path .\* -Include "*.exe","*.md","LICENSE" -Force | Copy-Item -Destination .\package
 
       - name: Zip Release
         uses: TheDoctor0/zip-release@0.4.2
