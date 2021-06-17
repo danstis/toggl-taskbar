@@ -46,7 +46,7 @@ jobs:
           cp `ls *.exe *.md LICENSE` ./package/
 
       - name: Zip Release
-        uses: TheDoctor0/zip-release@v0.2.1
+        uses: TheDoctor0/zip-release@0.4.2
         with:
           filename: toggl-taskbar.zip
           path: ./package/
