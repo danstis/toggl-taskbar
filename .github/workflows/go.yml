@@ -20,13 +20,13 @@ jobs:
       run: git fetch --prune --unshallow
     
     - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.6.1
+      uses: gittools/actions/gitversion/setup@v0.9.9
       with:
           versionSpec: '5.1.x'
     
     - name: Use GitVersion
       id: gitversion # step id used as reference for output values
-      uses: gittools/actions/gitversion/execute@v0.6.1
+      uses: gittools/actions/gitversion/execute@v0.9.9
 
     - name: Get dependencies
       run: go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
