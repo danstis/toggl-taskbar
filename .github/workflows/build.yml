@@ -15,6 +15,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
+          version: latest
   build:
     name: Build
     runs-on: windows-2019
@@ -46,9 +56,6 @@ jobs:
         run: |
           goversioninfo -64 -product-version="${{ steps.gitversion.outputs.semver }}" -ver-major="${{ steps.gitversion.outputs.major }}" -ver-minor="${{ steps.gitversion.outputs.minor }}" -ver-patch="${{ steps.gitversion.outputs.patch }}"
           go build -ldflags "-H=windowsgui -X main.Version=${{ steps.gitversion.outputs.semver }}" github.com/danstis/toggl-taskbar
-
-      - name: Test
-        run: go vet ./...
 
       - name: Package build
         run: |
