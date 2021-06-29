@@ -52,6 +52,7 @@ jobs:
 
       - name: Push version tag # https://github.com/marketplace/actions/commit-tagger
         uses: tvdias/github-tagger@v0.0.2
+        continue-on-error: true
         if: ${{ steps.gitversion.outputs.PreReleaseTagWithDash == '' }}
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
