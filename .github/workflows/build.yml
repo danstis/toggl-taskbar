@@ -59,7 +59,7 @@ jobs:
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2 # https://github.com/marketplace/actions/goreleaser-action
-        if: ${{ steps.gitversion.outputs.PreReleaseTagWithDash == '' }}
+        # if: ${{ steps.gitversion.outputs.PreReleaseTagWithDash == '' }}
         with:
           version: latest
           args: release --rm-dist

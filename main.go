@@ -1,4 +1,4 @@
-//go:generate goversioninfo -64
+//go:generate powershell -NoLogo -NoProfile -File ./.version.ps1
 package main
 
 import (
