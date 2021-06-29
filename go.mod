@@ -11,6 +11,7 @@ require (
 	github.com/getlantern/ops v0.0.0-20200403153110-8476b16edcd6 // indirect
 	github.com/getlantern/systray v1.1.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/josephspurrier/goversioninfo v1.2.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	golang.org/x/image v0.0.0-20210607152325-775e3b0c77b9 // indirect
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect

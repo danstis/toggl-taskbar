@@ -1,3 +1,4 @@
+//go:generate powershell -NoLogo -NoProfile -File ./.version.ps1
 package main
 
 import (
