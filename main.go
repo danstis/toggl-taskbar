@@ -1,4 +1,4 @@
-//go:generate powershell -NoLogo -NoProfile -File ./.version.ps1
+//go:generate powershell -NoLogo -NoProfile -ExecutionPolicy Unrestricted -File ./.version.ps1
 package main
 
 import (
