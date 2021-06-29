@@ -55,7 +55,7 @@ jobs:
         if: ${{ steps.gitversion.outputs.PreReleaseTagWithDash == '' }}
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.gitversion.outputs.FullSemVer }}
+          tag: v${{ steps.gitversion.outputs.FullSemVer }}
 
       - name: Check out code
         uses: actions/checkout@v2
