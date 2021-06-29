@@ -49,20 +49,20 @@ jobs:
         id: gitversion # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v0.9.9
 
-      - name: Get dependencies
-        run: go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+      # - name: Get dependencies
+      #   run: go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
 
-      - name: Build
-        run: |
-          goversioninfo -64 -product-version="${{ steps.gitversion.outputs.semver }}" -ver-major="${{ steps.gitversion.outputs.major }}" -ver-minor="${{ steps.gitversion.outputs.minor }}" -ver-patch="${{ steps.gitversion.outputs.patch }}"
-          go build -ldflags "-H=windowsgui -X main.Version=${{ steps.gitversion.outputs.semver }}" github.com/danstis/toggl-taskbar
+      # - name: Build
+      #   run: |
+      #     goversioninfo -64 -product-version="${{ steps.gitversion.outputs.semver }}" -ver-major="${{ steps.gitversion.outputs.major }}" -ver-minor="${{ steps.gitversion.outputs.minor }}" -ver-patch="${{ steps.gitversion.outputs.patch }}"
+      #     go build -ldflags "-H=windowsgui -X main.Version=${{ steps.gitversion.outputs.semver }}" github.com/danstis/toggl-taskbar
 
-      - name: Package build
-        run: |
-          mkdir ./package
-          Copy-Item .\config.toml.default .\package\config.toml
-          Copy-Item .\assets .\package\ -Recurse -Force
-          Get-ChildItem -Path .\* -Include "*.exe","*.md","LICENSE" -Force | Copy-Item -Destination .\package
+      # - name: Package build
+      #   run: |
+      #     mkdir ./package
+      #     Copy-Item .\config.toml.default .\package\config.toml
+      #     Copy-Item .\assets .\package\ -Recurse -Force
+      #     Get-ChildItem -Path .\* -Include "*.exe","*.md","LICENSE" -Force | Copy-Item -Destination .\package
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2 # https://github.com/marketplace/actions/goreleaser-action

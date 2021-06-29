@@ -2,10 +2,13 @@
 # Make sure to check the documentation at http://goreleaser.com
 before:
   hooks:
+    # Get goreleaser
+    - go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
     # You may remove this if you don't use go modules.
     - go mod download
     # you may remove this if you don't need go generate
     - go generate ./...
+    - cp ./config.toml.default ./config.toml
 builds:
   - env:
       - CGO_ENABLED=0
@@ -15,12 +18,18 @@ builds:
       - -H=windowsgui -X main.Version={{.Version}}
     mod_timestamp: "{{.CommitTimestamp}}"
 archives:
-  - replacements:
+  - format: zip
+    replacements:
       darwin: Darwin
       linux: Linux
       windows: Windows
       386: i386
       amd64: x86_64
+    files:
+      - "assets/*"
+      - "*.md"
+      - "LICENSE"
+      - "config.toml"
 checksum:
   name_template: "checksums.txt"
 snapshot:
