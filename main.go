@@ -17,7 +17,10 @@ import (
 // Version contains the package version
 var Version = "0.0.0-dev"
 
-const configFile = "config.toml"
+const (
+	configFile = "config.toml"
+	templateFormat = "%s: %d:%02d"
+)
 
 type togglTime struct {
 	hours   int
@@ -69,9 +72,9 @@ func onReady() {
 	systray.SetTitle("Toggl Weekly Time")
 	menuItems := make(map[int32]*systray.MenuItem)
 	for _, item := range config.Workspaces {
-		menuItems[item.ID] = systray.AddMenuItem(fmt.Sprintf("%s: %d:%02d", item.Name, 0, 0), item.Name)
+		menuItems[item.ID] = systray.AddMenuItem(fmt.Sprintf(templateFormat, item.Name, 0, 0), item.Name)
 	}
-	menuItems[0] = systray.AddMenuItem(fmt.Sprintf("%s: %d:%02d", "Total", 0, 0), "Total")
+	menuItems[0] = systray.AddMenuItem(fmt.Sprintf(templateFormat, "Total", 0, 0), "Total")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 	go func() {
@@ -89,14 +92,14 @@ func onReady() {
 			}
 			log.Printf("- %s [%s] time: %d:%02d\n", item.Name, fmt.Sprint(item.ID), t.hours, t.minutes)
 			// Set the title of the menuItem to contain the time for the individual workspace
-			menuItems[item.ID].SetTitle(fmt.Sprintf("%s: %d:%02d", item.Name, t.hours, t.minutes))
+			menuItems[item.ID].SetTitle(fmt.Sprintf(templateFormat, item.Name, t.hours, t.minutes))
 			totalTime.add(t)
 		}
 
 		log.Printf("- Got new total time %d:%02d\n", totalTime.hours, totalTime.minutes)
 		updateIcon(int(totalTime.hours), config.HighlightThreshold)
 		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", totalTime.hours, totalTime.minutes))
-		menuItems[0].SetTitle(fmt.Sprintf("%s: %d:%02d", "Total", totalTime.hours, totalTime.minutes))
+		menuItems[0].SetTitle(fmt.Sprintf(templateFormat, "Total", totalTime.hours, totalTime.minutes))
 		time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
 	}
 }
