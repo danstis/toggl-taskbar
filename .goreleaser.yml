@@ -17,6 +17,8 @@ builds:
     ldflags:
       - -H=windowsgui -X main.Version={{.Version}}
     mod_timestamp: "{{.CommitTimestamp}}"
+    ignore:
+      - goarch: arm64
 archives:
   - format: zip
     replacements:
