@@ -87,7 +87,7 @@ jobs:
           fetch-depth: 0
 
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2 # https://github.com/marketplace/actions/goreleaser-action
+        uses: goreleaser/goreleaser-action@v3 # https://github.com/marketplace/actions/goreleaser-action
         with:
           version: latest
           args: release --rm-dist
