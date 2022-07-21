@@ -3,7 +3,7 @@ module github.com/danstis/toggl-taskbar
 go 1.15
 
 require (
-	github.com/BurntSushi/toml v1.1.0
+	github.com/BurntSushi/toml v1.2.0
 	github.com/Kodeworks/golang-image-ico v0.0.0-20141118225523-73f0f4cfade9
 	github.com/fogleman/gg v1.3.0
 	github.com/getlantern/errors v1.0.1 // indirect
