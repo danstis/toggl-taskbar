@@ -1,4 +1,10 @@
 # toggl-taskbar
+
+[![Open in Visual Studio Code](https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=Open%20in%20Visual%20Studio%20Code&labelColor=2c2c32&color=007acc&logoColor=007acc)](https://open.vscode.dev/danstis/toggl-taskbar)
+[![Go Report Card](https://goreportcard.com/badge/github.com/danstis/gotemplate?style=flat-square)](https://goreportcard.com/report/github.com/danstis/toggl-taskbar)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/danstis/gotemplate)](https://pkg.go.dev/github.com/danstis/toggl-taskbar)
+[![Release](https://img.shields.io/github/release/danstis/gotemplate.svg?style=flat-square)](https://github.com/danstis/toggl-taskbar/releases/latest)
+
 toggl-taskbar is a simple Toggl weekly systray meter that provides summary information of your weekly hours tracked on Toggl.
 When exceeding a configured number of hours the taskbar icon will turn red, to inform you that you have gone over the pre-determined number of hours.
 
