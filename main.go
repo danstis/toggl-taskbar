@@ -18,7 +18,7 @@ import (
 var Version = "0.0.0-dev"
 
 const (
-	configFile = "config.toml"
+	configFile     = "config.toml"
 	templateFormat = "%s: %d:%02d"
 )
 
