@@ -31,6 +31,9 @@ Want to contribute? Great!
 To fix a bug or add an enhancement:
 
 * Fork the repo
+* Install development dependancies:
+  * Install goversioninfo `go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo`
+  * Install GitVersion `choco install gitversion.portable`
 * Create a new branch ( `git checkout -b improve-feature` )
 * Make the appropriate changes in the files
 * Update the Readme with any changes that are required

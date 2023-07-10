@@ -49,7 +49,6 @@ func main() {
 }
 
 func onReady() {
-	var t togglTime
 	// Get the settings
 	var config Settings
 	_, err := toml.DecodeFile(configFile, &config)
@@ -102,10 +101,9 @@ func onReady() {
 }
 
 func refreshData(config *Settings, menuItems map[int32]*systray.MenuItem) {
-	var t togglTime
 	totalTime := togglTime{hours: 0, minutes: 0}
 	for _, item := range config.Workspaces {
-		t, err = getWeeklyTime(config, fmt.Sprint(item.ID))
+		t, err := getWeeklyTime(config, fmt.Sprint(item.ID))
 		if err != nil {
 			log.Printf("Failed to get Toggl details: %v\n", err)
 		}
