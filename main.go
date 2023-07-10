@@ -75,7 +75,7 @@ func onReady() {
 	}
 	menuItems[0] = systray.AddMenuItem(fmt.Sprintf(templateFormat, "Total", 0, 0), "Total")
 	systray.AddSeparator()
-	mRefresh := systray.AddMenuItem("Refresh", "Refresh the data")
+	mRefresh := systray.AddMenuItem("Force Refresh", "Force Refresh the data")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 
