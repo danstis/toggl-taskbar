@@ -17,3 +17,4 @@
 /resource.syso
 /.vscode
 /dist
+.aider.*
