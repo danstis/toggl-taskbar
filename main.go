@@ -75,33 +75,50 @@ func onReady() {
 		menuItems[item.ID] = systray.AddMenuItem(fmt.Sprintf(templateFormat, item.Name, 0, 0), item.Name)
 	}
 	menuItems[0] = systray.AddMenuItem(fmt.Sprintf(templateFormat, "Total", 0, 0), "Total")
+	mRefresh := systray.AddMenuItem("Refresh", "Refresh the data")
 	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
+
 	go func() {
-		<-mQuit.ClickedCh
-		log.Println("Application exiting...")
-		systray.Quit()
+		for {
+			select {
+			case <-mQuit.ClickedCh:
+				log.Println("Application exiting...")
+				systray.Quit()
+				return
+			case <-mRefresh.ClickedCh:
+				log.Println("Manual refresh triggered...")
+				refreshData(&config, menuItems)
+			}
+		}
 	}()
 
-	for {
-		totalTime := togglTime{hours: 0, minutes: 0}
-		for _, item := range config.Workspaces {
-			t, err = getWeeklyTime(&config, fmt.Sprint(item.ID))
-			if err != nil {
-				log.Printf("Failed to get Toggl details: %v\n", err)
-			}
-			log.Printf("- %s [%s] time: %d:%02d\n", item.Name, fmt.Sprint(item.ID), t.hours, t.minutes)
-			// Set the title of the menuItem to contain the time for the individual workspace
-			menuItems[item.ID].SetTitle(fmt.Sprintf(templateFormat, item.Name, t.hours, t.minutes))
-			totalTime.add(t)
+	go func() {
+		for {
+			refreshData(&config, menuItems)
+			time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
 		}
+	}()
+}
 
-		log.Printf("- Got new total time %d:%02d\n", totalTime.hours, totalTime.minutes)
-		updateIcon(int(totalTime.hours), config.HighlightThreshold)
-		systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", totalTime.hours, totalTime.minutes))
-		menuItems[0].SetTitle(fmt.Sprintf(templateFormat, "Total", totalTime.hours, totalTime.minutes))
-		time.Sleep(time.Duration(config.SyncInterval) * time.Minute)
+func refreshData(config *Settings, menuItems map[int32]*systray.MenuItem) {
+	var t togglTime
+	totalTime := togglTime{hours: 0, minutes: 0}
+	for _, item := range config.Workspaces {
+		t, err = getWeeklyTime(config, fmt.Sprint(item.ID))
+		if err != nil {
+			log.Printf("Failed to get Toggl details: %v\n", err)
+		}
+		log.Printf("- %s [%s] time: %d:%02d\n", item.Name, fmt.Sprint(item.ID), t.hours, t.minutes)
+		// Set the title of the menuItem to contain the time for the individual workspace
+		menuItems[item.ID].SetTitle(fmt.Sprintf(templateFormat, item.Name, t.hours, t.minutes))
+		totalTime.add(t)
 	}
+
+	log.Printf("- Got new total time %d:%02d\n", totalTime.hours, totalTime.minutes)
+	updateIcon(int(totalTime.hours), config.HighlightThreshold)
+	systray.SetTooltip(fmt.Sprintf("Toggl time tracker: %d:%02d", totalTime.hours, totalTime.minutes))
+	menuItems[0].SetTitle(fmt.Sprintf(templateFormat, "Total", totalTime.hours, totalTime.minutes))
 }
 
 func onExit() {
