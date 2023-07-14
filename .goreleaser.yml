@@ -4,6 +4,7 @@ before:
   hooks:
     # Get goreleaser
     - go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+    - go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo
     # You may remove this if you don't use go modules.
     - go mod download
     # you may remove this if you don't need go generate

@@ -10,10 +10,10 @@ toggl-taskbar is a simple Toggl weekly systray meter that provides summary infor
 When exceeding a configured number of hours the taskbar icon will turn red, to inform you that you have gone over the pre-determined number of hours.
 
 Taskbar icon example:
-![Taskbar icon](https://raw.githubusercontent.com/danstis/toggl-taskbar/master/images/icon.png)
+![Taskbar icon](https://raw.githubusercontent.com/danstis/toggl-taskbar/main/images/icon.png)
 
 Taskbar icon clicked:
-![Taskbar icon clicked](https://raw.githubusercontent.com/danstis/toggl-taskbar/master/images/clicked.png)
+![Taskbar icon clicked](https://raw.githubusercontent.com/danstis/toggl-taskbar/main/images/clicked.png)
 
 ## How to use
 
