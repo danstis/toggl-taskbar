@@ -10,7 +10,7 @@ import (
 	"github.com/BurntSushi/toml"
 	ico "github.com/Kodeworks/golang-image-ico"
 	"github.com/fogleman/gg"
-	"github.com/getlantern/systray"
+	"fyne.io/systray"
 	"gopkg.in/resty.v1"
 )
 
