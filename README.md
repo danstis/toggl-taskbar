@@ -4,6 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/danstis/gotemplate?style=flat-square)](https://goreportcard.com/report/github.com/danstis/toggl-taskbar)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/danstis/gotemplate)](https://pkg.go.dev/github.com/danstis/toggl-taskbar)
 [![Release](https://img.shields.io/github/release/danstis/gotemplate.svg?style=flat-square)](https://github.com/danstis/toggl-taskbar/releases/latest)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=danstis_toggl-taskbar&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=danstis_toggl-taskbar)
 
 toggl-taskbar is a simple Toggl weekly systray meter that provides summary information of your weekly hours tracked on Toggl.
 When exceeding a configured number of hours the taskbar icon will turn red, to inform you that you have gone over the pre-determined number of hours.
@@ -31,6 +32,9 @@ Want to contribute? Great!
 To fix a bug or add an enhancement:
 
 * Fork the repo
+* Install development dependancies:
+  * Install goversioninfo `go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo && go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo`
+  * Install GitVersion `choco install gitversion.portable`
 * Create a new branch ( `git checkout -b improve-feature` )
 * Make the appropriate changes in the files
 * Update the Readme with any changes that are required
