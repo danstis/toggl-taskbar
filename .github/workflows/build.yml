@@ -56,6 +56,7 @@ jobs:
   build:
     name: Release
     runs-on: windows-2019
+    if: github.ref == 'refs/heads/main'
     needs: [golangci]
     steps:
       - name: Set up Go 1.x
