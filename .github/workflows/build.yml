@@ -28,6 +28,22 @@ jobs:
         run: |
           echo "::notice::FullSemVer ${{ steps.gitversion.outputs.FullSemVer }}"
           echo "::notice::PreReleaseTagWithDash ${{ steps.gitversion.outputs.PreReleaseTagWithDash }}"
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ["1.x"]
+    steps:
+      - uses: actions/checkout@v3.5.3
+      - name: Set up Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Build
+        run: go build -race -v ./...
+      - name: Test
+        run: go test -race -v ./...
   golangci:
     name: Lint
     runs-on: ubuntu-latest
@@ -42,7 +58,6 @@ jobs:
         with:
           # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
           version: latest
-          skip-pkg-cache: true
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
@@ -57,20 +72,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  test:
-    name: Build and test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: ["1.x"]
-    needs: [version]
-    steps:
-      - uses: actions/checkout@v3.5.3
-      - name: Set up Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ matrix.go-version }}
-      - name: Build
-        run: go build -race -v ./...
-      - name: Test
-        run: go test -race -v ./...
