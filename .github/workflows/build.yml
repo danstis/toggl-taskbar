@@ -29,6 +29,8 @@ jobs:
       - name: Use GitVersion
         id: gitversion # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v0.10.2
+      - name: Create annotation for build error
+        run: echo "::notice::Version ${{ steps.gitversion.outputs.FullSemVer }}"
   golangci:
     name: Lint
     runs-on: ubuntu-latest
