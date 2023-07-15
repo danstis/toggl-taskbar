@@ -7,15 +7,17 @@ import (
 	"log"
 	"time"
 
+	"fyne.io/systray"
 	"github.com/BurntSushi/toml"
 	ico "github.com/Kodeworks/golang-image-ico"
 	"github.com/fogleman/gg"
-	"fyne.io/systray"
 	"gopkg.in/resty.v1"
 )
 
-// Version contains the package version
-var Version = "0.0.0-dev"
+// Version info maintained by goreleaser: https://goreleaser.com/cookbooks/using-main.version/
+var (
+	version = "dev"
+)
 
 const (
 	configFile     = "config.toml"
@@ -65,7 +67,7 @@ func onReady() {
 	updateIcon(0, config.HighlightThreshold)
 	mTitle := systray.AddMenuItem("Toggl Weekly Tracker", "Title")
 	mTitle.Disable()
-	mVersion := systray.AddMenuItem(fmt.Sprintf("v%v", Version), "Version")
+	mVersion := systray.AddMenuItem(fmt.Sprintf("v%v", version), "Version")
 	mVersion.Disable()
 	systray.AddSeparator()
 	systray.SetTitle("Toggl Weekly Time")
