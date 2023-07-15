@@ -23,7 +23,6 @@ builds:
 archives:
   - format: zip
     files:
-      - "assets/*"
       - "*.md"
       - "LICENSE"
       - "config.toml"
