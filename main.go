@@ -51,19 +51,20 @@ type Workspaces struct {
 
 // Main entry point for the app.
 func main() {
+	unpackFont()
 	systray.Run(onReady, onExit)
 }
 
-func onReady() {
-	// Check if the font file exists, if not, write the embedded file to disk
+func unpackFont() {
 	fontPath := "assets/fonts/Go-Bold.ttf"
 	if _, err := os.Stat(fontPath); os.IsNotExist(err) {
-		err = os.WriteFile(fontPath, embeddedFont, 0644)
-		if err != nil {
+		if err := os.WriteFile(fontPath, embeddedFont, 0644); err != nil {
 			log.Fatalf("Failed to write font file to disk: %v", err)
 		}
 	}
+}
 
+func onReady() {
 	// Get the settings
 	var config Settings
 	_, err := toml.DecodeFile(configFile, &config)
