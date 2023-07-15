@@ -51,6 +51,20 @@ type Workspaces struct {
 
 // Main entry point for the app.
 func main() {
+	// Implement log rollover
+	if _, err := os.Stat("log.txt.3"); err == nil {
+		os.Remove("log.txt.3")
+	}
+	if _, err := os.Stat("log.txt.2"); err == nil {
+		os.Rename("log.txt.2", "log.txt.3")
+	}
+	if _, err := os.Stat("log.txt.1"); err == nil {
+		os.Rename("log.txt.1", "log.txt.2")
+	}
+	if _, err := os.Stat("log.txt"); err == nil {
+		os.Rename("log.txt", "log.txt.1")
+	}
+
 	// Create a log file
 	logFile, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
