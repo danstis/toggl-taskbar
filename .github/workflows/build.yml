@@ -1,4 +1,5 @@
 name: Build and Release
+run-name: ${{ github.event_name }} on ${{ github.head_ref }} by @${{ github.actor }}
 
 on:
   push:
@@ -13,23 +14,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  golangci:
-    name: Lint
+  version:
+    name: Generate version and tag
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3.5.3
-      - uses: actions/setup-go@v4
-        with:
-          go-version: ^1.20
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3.6.0
-        with:
-          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
-          version: latest
-          skip-pkg-cache: true
-  sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}
+      PreReleaseTagWithDash: ${{ steps.gitversion.outputs.PreReleaseTagWithDash }}
     steps:
       - uses: actions/checkout@v3.5.3
         with:
@@ -41,53 +33,59 @@ jobs:
       - name: Use GitVersion
         id: gitversion # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v0.10.2
+      - name: Create annotation for build error
+        run: |
+          echo "::notice::FullSemVer ${{ steps.gitversion.outputs.FullSemVer }}"
+          echo "::notice::PreReleaseTagWithDash ${{ steps.gitversion.outputs.PreReleaseTagWithDash }}"
+      - name: Bump version and push tag # https://github.com/marketplace/actions/github-tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ steps.gitversion.outputs.FullSemVer }}
+          tag_prefix: v
+  golangci:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.5.3
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v4
+        with:
+          go-version: ^1.20
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3.6.0
+        with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
+          version: latest
+          skip-pkg-cache: true
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    needs: [version]
+    steps:
+      - uses: actions/checkout@v3.5.3
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
-            -Dsonar.projectVersion=${{ steps.gitversion.outputs.FullSemVer }}
+            -Dsonar.projectVersion=${{ needs.version.outputs.FullSemVer }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   build:
     name: Release
     runs-on: windows-2019
-    if: github.ref == 'refs/heads/main'
-    needs: [golangci]
+    needs: [version, golangci]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')
     steps:
+      - uses: actions/checkout@v3.5.3
+        with:
+          fetch-depth: 0
       - name: Set up Go 1.x
         uses: actions/setup-go@v4
         with:
           go-version: ^1.20
-        id: go
-
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v3.5.3
-        with:
-          fetch-depth: 0
-
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.10.2
-        with:
-          versionSpec: "5.x"
-
-      - name: Use GitVersion
-        id: gitversion # step id used as reference for output values
-        uses: gittools/actions/gitversion/execute@v0.10.2
-
-      - name: Push version tag # https://github.com/marketplace/actions/commit-tagger
-        uses: tvdias/github-tagger@v0.0.2
-        continue-on-error: true
-        if: ${{ steps.gitversion.outputs.PreReleaseTagWithDash == '' }}
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ steps.gitversion.outputs.FullSemVer }}
-
-      - name: Check out code
-        uses: actions/checkout@v3.5.3
-        if: ${{ steps.gitversion.outputs.PreReleaseTagWithDash == '' }}
-        with:
-          fetch-depth: 0
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v4 # https://github.com/marketplace/actions/goreleaser-action
