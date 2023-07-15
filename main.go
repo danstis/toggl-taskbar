@@ -5,7 +5,6 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -59,7 +58,7 @@ func onReady() {
 	// Check if the font file exists, if not, write the embedded file to disk
 	fontPath := "assets/fonts/Go-Bold.ttf"
 	if _, err := os.Stat(fontPath); os.IsNotExist(err) {
-		err = ioutil.WriteFile(fontPath, embeddedFont, 0644)
+		err = os.WriteFile(fontPath, embeddedFont, 0644)
 		if err != nil {
 			log.Fatalf("Failed to write font file to disk: %v", err)
 		}
@@ -234,7 +233,7 @@ func getOpenTimeEntry(c *Settings, w string) (time.Duration, error) {
 	}
 
 	// Calculate the number of seconds based on the input data.
-	// Unix epoc plus returned value of duration = seconds the current entry has been running for.
+	// Unix epoch plus returned value of duration = seconds the current entry has been running for.
 	od := int32(time.Now().Unix()) + ot.Data.Duration
 
 	return time.Duration(od) * time.Second, nil

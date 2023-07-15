@@ -32,7 +32,7 @@ Want to contribute? Great!
 To fix a bug or add an enhancement:
 
 * Fork the repo
-* Install development dependancies:
+* Install development dependencies:
   * Install goversioninfo `go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo && go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo`
   * Install GitVersion `choco install gitversion.portable`
 * Create a new branch ( `git checkout -b improve-feature` )
