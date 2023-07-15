@@ -31,6 +31,10 @@ checksum:
   name_template: "checksums.txt"
 snapshot:
   name_template: "{{.Tag}}-snapshot#{{.Commit}}"
+release:
+  discussion_category_name: General
+  mode: append
+  prerelease: auto
 changelog:
   sort: asc
   filters:
