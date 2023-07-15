@@ -52,6 +52,17 @@ type Workspaces struct {
 // Main entry point for the app.
 func main() {
 	unpackFont()
+
+	// Create a log file
+	logFile, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer logFile.Close()
+
+	// Set the output of the logger to the log file
+	log.SetOutput(logFile)
+
 	systray.Run(onReady, onExit)
 }
 
