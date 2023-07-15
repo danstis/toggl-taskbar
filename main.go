@@ -3,8 +3,11 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"fyne.io/systray"
@@ -17,6 +20,8 @@ import (
 // Version info maintained by goreleaser: https://goreleaser.com/cookbooks/using-main.version/
 var (
 	version = "dev"
+	//go:embed assets/fonts/Go-Bold.ttf
+	embeddedFont []byte
 )
 
 const (
@@ -51,6 +56,15 @@ func main() {
 }
 
 func onReady() {
+	// Check if the font file exists, if not, write the embedded file to disk
+	fontPath := "assets/fonts/Go-Bold.ttf"
+	if _, err := os.Stat(fontPath); os.IsNotExist(err) {
+		err = ioutil.WriteFile(fontPath, embeddedFont, 0644)
+		if err != nil {
+			log.Fatalf("Failed to write font file to disk: %v", err)
+		}
+	}
+
 	// Get the settings
 	var config Settings
 	_, err := toml.DecodeFile(configFile, &config)
