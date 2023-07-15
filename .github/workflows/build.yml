@@ -76,6 +76,7 @@ jobs:
     name: Release
     runs-on: windows-2019
     needs: [version, golangci]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')
     steps:
       - uses: actions/checkout@v3.5.3
         with:
