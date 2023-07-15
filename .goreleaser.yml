@@ -16,7 +16,7 @@ builds:
     goos:
       - windows
     ldflags:
-      - -H=windowsgui -X main.Version={{.Version}}
+      - -H=windowsgui
     mod_timestamp: "{{.CommitTimestamp}}"
     ignore:
       - goarch: arm64
