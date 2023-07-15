@@ -23,7 +23,6 @@ builds:
 archives:
   - format: zip
     files:
-      - "assets/*"
       - "*.md"
       - "LICENSE"
       - "config.toml"
@@ -32,7 +31,7 @@ checksum:
 snapshot:
   name_template: "{{.Tag}}-snapshot#{{.Commit}}"
 release:
-  discussion_category_name: General
+  discussion_category_name: Releases
   mode: append
   prerelease: auto
 changelog:

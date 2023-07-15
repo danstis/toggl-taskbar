@@ -3,8 +3,10 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"fyne.io/systray"
@@ -16,7 +18,9 @@ import (
 
 // Version info maintained by goreleaser: https://goreleaser.com/cookbooks/using-main.version/
 var (
-	version = "dev"
+	version = "0.0.0-dev"
+	//go:embed assets/fonts/Go-Bold.ttf
+	embeddedFont []byte
 )
 
 const (
@@ -45,9 +49,19 @@ type Workspaces struct {
 	Name string `json:"name"`
 }
 
-// Main entry point for the app.
 func main() {
+	unpackFont()
 	systray.Run(onReady, onExit)
+}
+
+func unpackFont() {
+	log.Printf("Unpacking font file...")
+	fontPath := "Go-Bold.ttf"
+	if _, err := os.Stat(fontPath); os.IsNotExist(err) {
+		if err := os.WriteFile(fontPath, embeddedFont, 0644); err != nil {
+			log.Fatalf("Failed to write font file to disk: %v", err)
+		}
+	}
 }
 
 func onReady() {
@@ -220,7 +234,7 @@ func getOpenTimeEntry(c *Settings, w string) (time.Duration, error) {
 	}
 
 	// Calculate the number of seconds based on the input data.
-	// Unix epoc plus returned value of duration = seconds the current entry has been running for.
+	// Unix epoch plus returned value of duration = seconds the current entry has been running for.
 	od := int32(time.Now().Unix()) + ot.Data.Duration
 
 	return time.Duration(od) * time.Second, nil
@@ -272,7 +286,7 @@ func createIcon(x, y, hours, threshold int) ([]byte, error) {
 	}
 	// Add Text
 	dc.SetHexColor("#FFFFFF")
-	if err := dc.LoadFontFace("assets/fonts/Go-Bold.ttf", 14); err != nil {
+	if err := dc.LoadFontFace("Go-Bold.ttf", 14); err != nil {
 		return []byte{}, err
 	}
 	dc.DrawStringAnchored(fmt.Sprintf("%v", hours), float64(x/2), float64(y/2), 0.5, 0.5)
