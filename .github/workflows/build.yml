@@ -14,8 +14,10 @@ on:
 
 jobs:
   version:
-    name: Generate Version
+    name: Generate version and tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}
     steps:
@@ -31,6 +33,13 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.10.2
       - name: Create annotation for build error
         run: echo "::notice::Version ${{ steps.gitversion.outputs.FullSemVer }}"
+      - name: Bump version and push tag # https://github.com/marketplace/actions/github-tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ steps.gitversion.outputs.FullSemVer }}
+          tag_prefix: v
   golangci:
     name: Lint
     runs-on: ubuntu-latest
@@ -64,8 +73,6 @@ jobs:
     name: Release
     runs-on: windows-2019
     needs: [version, golangci]
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v3.5.3
         with:
@@ -74,18 +81,6 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ^1.20
-
-      - name: Bump version and push tag # https://github.com/marketplace/actions/github-tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          custom_tag: ${{ needs.version.outputs.FullSemVer }}
-          tag_prefix: v
-
-      - uses: actions/checkout@v3.5.3
-        with:
-          fetch-depth: 0
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v4 # https://github.com/marketplace/actions/goreleaser-action
