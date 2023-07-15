@@ -1,23 +1,19 @@
-name: Build and Test
+name: Create Release
 
 on:
   push:
-    branches:
-      - "*"
-  pull_request:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
   version:
-    name: Generate version
+    name: Generate version and tag
     runs-on: ubuntu-latest
     permissions:
       contents: write
     outputs:
       FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}
-      PreReleaseTagWithDash: ${{ steps.gitversion.outputs.PreReleaseTagWithDash }}
     steps:
       - uses: actions/checkout@v3.5.3
         with:
@@ -32,22 +28,13 @@ jobs:
       - name: Create annotation for build error
         run: |
           echo "::notice::FullSemVer ${{ steps.gitversion.outputs.FullSemVer }}"
-          echo "::notice::PreReleaseTagWithDash ${{ steps.gitversion.outputs.PreReleaseTagWithDash }}"
-  golangci:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3.5.3
-      - name: Set up Go 1.x
-        uses: actions/setup-go@v4
+      - name: Bump version and push tag # https://github.com/marketplace/actions/github-tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
         with:
-          go-version: ^1.20
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3.6.0
-        with:
-          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
-          version: latest
-          skip-pkg-cache: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          custom_tag: ${{ steps.gitversion.outputs.FullSemVer }}
+          tag_prefix: v
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
@@ -62,20 +49,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  test:
-    name: Build and test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: ["1.x", "1.20.x"]
+  build:
+    name: Release
+    runs-on: windows-2019
     needs: [version]
     steps:
       - uses: actions/checkout@v3.5.3
-      - name: Set up Go ${{ matrix.go-version }}
+        with:
+          fetch-depth: 0
+      - name: Set up Go 1.x
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ matrix.go-version }}
-      - name: Build
-        run: go build -race -v ./...
-      - name: Test
-        run: go test -race -v ./...
+          go-version: ^1.20
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v4 # https://github.com/marketplace/actions/goreleaser-action
+        with:
+          version: latest
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
