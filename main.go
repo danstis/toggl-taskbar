@@ -56,7 +56,7 @@ func main() {
 }
 
 func unpackFont() {
-	fontPath := "assets/fonts/Go-Bold.ttf"
+	fontPath := "./assets/fonts/Go-Bold.ttf"
 	if _, err := os.Stat(fontPath); os.IsNotExist(err) {
 		if err := os.WriteFile(fontPath, embeddedFont, 0644); err != nil {
 			log.Fatalf("Failed to write font file to disk: %v", err)
