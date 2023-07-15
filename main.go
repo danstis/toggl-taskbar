@@ -18,7 +18,7 @@ import (
 
 // Version info maintained by goreleaser: https://goreleaser.com/cookbooks/using-main.version/
 var (
-	version = "dev"
+	version = "0.0.0-dev"
 	//go:embed assets/fonts/Go-Bold.ttf
 	embeddedFont []byte
 )
@@ -49,40 +49,14 @@ type Workspaces struct {
 	Name string `json:"name"`
 }
 
-// Main entry point for the app.
 func main() {
-	// Implement log rollover
-	if _, err := os.Stat("log.txt.3"); err == nil {
-		os.Remove("log.txt.3")
-	}
-	if _, err := os.Stat("log.txt.2"); err == nil {
-		os.Rename("log.txt.2", "log.txt.3")
-	}
-	if _, err := os.Stat("log.txt.1"); err == nil {
-		os.Rename("log.txt.1", "log.txt.2")
-	}
-	if _, err := os.Stat("log.txt"); err == nil {
-		os.Rename("log.txt", "log.txt.1")
-	}
-
-	// Create a log file
-	logFile, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
-	}
-	defer logFile.Close()
-
 	unpackFont()
-
-	// Set the output of the logger to the log file
-	log.SetOutput(logFile)
-
 	systray.Run(onReady, onExit)
 }
 
 func unpackFont() {
 	log.Printf("Unpacking font file...")
-	fontPath := "./assets/fonts/Go-Bold.ttf"
+	fontPath := "Go-Bold.ttf"
 	if _, err := os.Stat(fontPath); os.IsNotExist(err) {
 		if err := os.WriteFile(fontPath, embeddedFont, 0644); err != nil {
 			log.Fatalf("Failed to write font file to disk: %v", err)
@@ -312,7 +286,7 @@ func createIcon(x, y, hours, threshold int) ([]byte, error) {
 	}
 	// Add Text
 	dc.SetHexColor("#FFFFFF")
-	if err := dc.LoadFontFace("assets/fonts/Go-Bold.ttf", 14); err != nil {
+	if err := dc.LoadFontFace("Go-Bold.ttf", 14); err != nil {
 		return []byte{}, err
 	}
 	dc.DrawStringAnchored(fmt.Sprintf("%v", hours), float64(x/2), float64(y/2), 0.5, 0.5)
