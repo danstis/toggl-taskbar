@@ -12,7 +12,7 @@ jobs:
       contents: write
     outputs:
       FullSemVer: ${{ steps.gitversion.outputs.FullSemVer }}
-      PreReleaseTagWithDash: ${{ steps.gitversion.outputs.PreReleaseTagWithDash }}
+      PreReleaseTag: ${{ steps.gitversion.outputs.PreReleaseTag }}
     steps:
       - uses: actions/checkout@v3.5.3
         with:
@@ -27,7 +27,7 @@ jobs:
       - name: Create annotation for build error
         run: |
           echo "::notice::FullSemVer ${{ steps.gitversion.outputs.FullSemVer }}"
-          echo "::notice::PreReleaseTagWithDash ${{ steps.gitversion.outputs.PreReleaseTagWithDash }}"
+          echo "::notice::PreReleaseTag ${{ steps.gitversion.outputs.PreReleaseTag }}"
   test:
     name: Build and test
     runs-on: ubuntu-latest
