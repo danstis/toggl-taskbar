@@ -142,26 +142,21 @@ func onExit() {
 
 func (c *Settings) getUserDetail() error {
 	type UserResponse struct {
-		Data struct {
-			ID         int32        `json:"id"`
-			Workspaces []Workspaces `json:"workspaces"`
-		} `json:"data"`
+		ID         int32        `json:"id"`
+		Workspaces []Workspaces `json:"workspaces"`
 	}
 	var ur UserResponse
-	toggl := resty.New().SetHostURL("https://api.track.toggl.com/api/v8").SetBasicAuth(c.Token, "api_token")
+	toggl := resty.New().SetHostURL("https://api.track.toggl.com/api/v9").SetBasicAuth(c.Token, "api_token")
 
 	_, err := toggl.R().
-		SetQueryParams(map[string]string{
-			"user_agent": c.Email,
-		}).
 		SetResult(&ur).
 		Get("/me?with_related_data=true")
 	if err != nil {
 		return fmt.Errorf("unable to get user details from the Toggl API: %v", err)
 	}
 
-	c.UserID = fmt.Sprint(ur.Data.ID)
-	c.Workspaces = ur.Data.Workspaces
+	c.UserID = fmt.Sprint(ur.ID)
+	c.Workspaces = ur.Workspaces
 	return nil
 }
 
@@ -194,7 +189,7 @@ func getClosedTimeEntries(c *Settings, w string) (time.Duration, error) {
 			"user_agent":   c.Email,
 			"workspace_id": w,
 			"user_ids":     c.UserID,
-			"since":        getLastMonday(),
+			"since":        getLastMonday(time.Now()),
 		}).
 		SetResult(&ct).
 		Get("/weekly")
@@ -207,43 +202,36 @@ func getClosedTimeEntries(c *Settings, w string) (time.Duration, error) {
 
 func getOpenTimeEntry(c *Settings, w string) (time.Duration, error) {
 	type TimeEntriesResponse struct {
-		Data struct {
-			WID      int32 `json:"wid"`
-			Duration int32 `json:"duration"`
-		} `json:"data"`
+		WID      int32 `json:"wid"`
+		Duration int32 `json:"duration"`
 	}
 	var ot TimeEntriesResponse
 
-	toggl := resty.New().SetHostURL("https://api.track.toggl.com/api/v8").SetBasicAuth(c.Token, "api_token")
+	toggl := resty.New().SetHostURL("https://api.track.toggl.com/api/v9").SetBasicAuth(c.Token, "api_token")
 
 	_, err := toggl.R().
-		SetQueryParams(map[string]string{
-			"user_agent": c.Email,
-			"wid":        w,
-		}).
 		SetResult(&ot).
-		Get("/time_entries/current")
+		Get("/me/time_entries/current")
 	if err != nil {
 		return time.Duration(0), fmt.Errorf("unable to get current time entry from the Toggl API: %v", err)
 	}
 
 	// if the returned duration is not negative then there is no open entry.
 	// we also filter entries that do not match the workspace here.
-	if ot.Data.Duration >= 0 || fmt.Sprint(ot.Data.WID) != w {
+	if ot.Duration >= 0 || fmt.Sprint(ot.WID) != w {
 		return 0, nil
 	}
 
 	// Calculate the number of seconds based on the input data.
 	// Unix epoch plus returned value of duration = seconds the current entry has been running for.
-	od := int32(time.Now().Unix()) + ot.Data.Duration
+	od := int32(time.Now().Unix()) + ot.Duration
 
 	return time.Duration(od) * time.Second, nil
 }
 
-func getLastMonday() string {
-	t := time.Now()
-	delta := (int(t.Weekday()) - 1) * -1
-	t = t.AddDate(0, 0, delta)
+func getLastMonday(t time.Time) string {
+	delta := (int(t.Weekday()) + 6) % 7
+	t = t.AddDate(0, 0, -delta)
 
 	return t.Format("2006-01-02")
 }
