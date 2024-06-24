@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	fyne.io/systray v1.10.0
-	github.com/BurntSushi/toml v1.3.2
+	github.com/BurntSushi/toml v1.4.0
 	github.com/Kodeworks/golang-image-ico v0.0.0-20141118225523-73f0f4cfade9
 	github.com/fogleman/gg v1.3.0
 	gopkg.in/resty.v1 v1.12.0
