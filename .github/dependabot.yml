@@ -2,16 +2,23 @@
 # package ecosystems to update and where the package manifests are located.
 # Please see the documentation for all configuration options:
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/about-dependabot-version-updates
+#
+# Note: open-pull-requests-limit: 0 is set on every ecosystem so Dependabot
+# does not open PRs. Renovate (configured in /renovate.json) owns all version
+# updates for this repo, including go modules, GitHub Actions, and the Go
+# version pin in workflow go-version inputs.
 
 version: 2
 updates:
-  # Update go modules
-  - package-ecosystem: "gomod" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # Update go modules (Dependabot disabled; Renovate owns this)
+  - package-ecosystem: "gomod"
+    directory: "/"
     schedule:
       interval: "daily"
-  # Maintain dependencies for GitHub Actions
+    open-pull-requests-limit: 0
+  # Maintain dependencies for GitHub Actions (Dependabot disabled; Renovate owns this)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 0
