@@ -2,5 +2,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Track Go version pin in actions/setup-go inputs",
+      "managerFilePatterns": ["^\\.github/workflows/[^/]+\\.ya?ml$"],
+      "matchStrings": [
+        "(?:^|\\r\\n|\\r|\\n)\\s*go-version:\\s*[\"\\']?\\^?(?<currentValue>\\d+\\.\\d+(?:\\.\\d+)?)[\"\\']?\\s*(?:#.*)?(?:$|\\r\\n|\\r|\\n)",
+        "(?:^|\\r\\n|\\r|\\n)\\s*go-version:\\s*\\[\\s*\"\\^?(?<currentValue>\\d+\\.\\d+(?:\\.\\d+)?)\"\\s*\\]\\s*(?:#.*)?(?:$|\\r\\n|\\r|\\n)"
+      ],
+      "datasourceTemplate": "golang-version",
+      "depNameTemplate": "go"
+    }
   ]
 }
