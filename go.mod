@@ -1,6 +1,6 @@
 module github.com/danstis/toggl-taskbar
 
-go 1.20
+go 1.27
 
 require (
 	fyne.io/systray v1.10.0
