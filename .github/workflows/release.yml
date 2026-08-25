@@ -41,11 +41,17 @@ jobs:
     needs: [version]
     steps:
       - uses: actions/checkout@v4.1.7
+      - name: Set up Java 21 (for SonarCloud scanner JRE)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
           args: >
             -Dsonar.projectVersion=${{ needs.version.outputs.FullSemVer }}
+            -Dsonar.scanner.skipJreProvisioning=true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
