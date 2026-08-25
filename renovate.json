@@ -3,13 +3,14 @@
   "extends": [
     "config:recommended"
   ],
-  "regexManagers": [
+  "customManagers": [
     {
+      "customType": "regex",
       "description": "Track Go version pin in actions/setup-go inputs",
-      "fileMatch": ["^\\.github/workflows/[^/]+\\.ya?ml$"],
+      "managerFilePatterns": ["^\\.github/workflows/[^/]+\\.ya?ml$"],
       "matchStrings": [
-        "go-version:\\s*\\^?(?<currentValue>\\d+\\.\\d+(?:\\.\\d+)?)\\s*[\"']?\\s*(#.*)?$",
-        "go-version:\\s*\\[\"\\^?(?<currentValue>\\d+\\.\\d+(?:\\.\\d+)?)\"\\]\\s*(#.*)?$"
+        "(?:^|\\r\\n|\\r|\\n)\\s*go-version:\\s*[\"\\']?\\^?(?<currentValue>\\d+\\.\\d+(?:\\.\\d+)?)[\"\\']?\\s*(?:#.*)?(?:$|\\r\\n|\\r|\\n)",
+        "(?:^|\\r\\n|\\r|\\n)\\s*go-version:\\s*\\[\\s*\"\\^?(?<currentValue>\\d+\\.\\d+(?:\\.\\d+)?)\"\\s*\\]\\s*(?:#.*)?(?:$|\\r\\n|\\r|\\n)"
       ],
       "datasourceTemplate": "golang-version",
       "depNameTemplate": "go"
