@@ -54,7 +54,7 @@ jobs:
         with:
           go-version: ^1.27
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3.7.1
+        uses: golangci/golangci-lint-action@v9.3.0
         with:
           # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
           version: latest
@@ -70,8 +70,9 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v8.2.1
         with:
+          scannerVersion: 8.1.0.6389
           args: >
             -Dsonar.projectVersion=${{ needs.version.outputs.FullSemVer }}
             -Dsonar.scanner.skipJreProvisioning=true

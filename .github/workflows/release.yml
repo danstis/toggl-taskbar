@@ -47,8 +47,9 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v8.2.1
         with:
+          scannerVersion: 8.1.0.6389
           args: >
             -Dsonar.projectVersion=${{ needs.version.outputs.FullSemVer }}
             -Dsonar.scanner.skipJreProvisioning=true
