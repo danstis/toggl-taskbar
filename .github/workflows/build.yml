@@ -36,7 +36,7 @@ jobs:
         go-version: ["^1.27"]
     steps:
       - uses: actions/checkout@v4.1.7
-      - name: Set up Go ${{ matrix.go-version }}
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.7
-      - name: Set up Go 1.x
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: ^1.27
@@ -64,7 +64,7 @@ jobs:
     needs: [version]
     steps:
       - uses: actions/checkout@v4.1.7
-      - name: Set up Java 21 (for SonarCloud scanner JRE)
+      - name: Set up Java (for SonarCloud scanner JRE)
         uses: actions/setup-java@v4
         with:
           distribution: temurin
