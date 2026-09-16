@@ -45,7 +45,7 @@ jobs:
         uses: actions/setup-java@v4.9.1
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: '25'
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v8.2.1
         with:
