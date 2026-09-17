@@ -47,7 +47,7 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v8.2.1
+        uses: SonarSource/sonarqube-scan-action@v8.2.2
         with:
           scannerVersion: 8.1.0.6389
           args: >
