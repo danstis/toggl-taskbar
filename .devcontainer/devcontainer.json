@@ -35,7 +35,7 @@
         "ghcr.io/guiyomh/features/goreleaser:0": {},
         "ghcr.io/guiyomh/features/gotestsum:0": {},
         "ghcr.io/devcontainers/features/docker-in-docker": {},
-        "ghcr.io/danstis/devcontainers-features/gitversion:0": {
+        "ghcr.io/danstis/devcontainers-features/gitversion:1": {
             "version": "5"
         }
     },
