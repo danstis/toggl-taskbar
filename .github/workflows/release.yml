@@ -58,7 +58,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   build:
     name: Release
-    runs-on: windows-2019
+    runs-on: windows-2025
     needs: [version]
     steps:
       - uses: actions/checkout@v7.0.1
